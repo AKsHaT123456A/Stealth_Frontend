@@ -5,7 +5,7 @@ import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 const Room = () => {
   const { roomId } = useParams();
 const username = roomId;
-  
+  const a=0;
   const meet = async (element) => {
     const appId = 1903949555;
     const serverSecret = "24bced055e2cc9835f8d16411299bc18";

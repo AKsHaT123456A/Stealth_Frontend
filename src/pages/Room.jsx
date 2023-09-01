@@ -14,7 +14,7 @@ const Room = () => {
   const meetElementRef = useRef(null);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/api/v1/video/call?roomName=Abcdef").then((res) => {
+    axios.get("https://stealth-zys3.onrender.com/api/v1/video/call?roomName=Abcdef").then((res) => {
       console.log(res.data);
       if (res.data.isAccepted) {
         setisAccepted(true);

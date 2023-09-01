@@ -4,15 +4,16 @@ import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import axios from "axios";
 
 const Room = () => {
-  const [isAccepted, setisAccepted] = useState(false);
-  const [isRejected, setisRejected] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(false);
+  const [isRejected, setIsRejected] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("Loading...");
+  const [message, setMessage] = useState("Loading.....");
   const { roomId } = useParams();
   const username = roomId;
 
   const meetElementRef = useRef(null);
-  useEffect(() => {
+
+  const fetchData = () => {
     axios
       .get(
         "https://stealth-zys3.onrender.com/api/v1/video/call?roomName=Abcdef"
@@ -20,18 +21,27 @@ const Room = () => {
       .then((res) => {
         console.log(res.data);
         if (res.data.isAccepted) {
-          setisAccepted(true);
+          setIsAccepted(true);
           setLoading(false);
           setMessage("Call Accepted");
         } else if (res.data.isRejected) {
-          setisRejected(true);
+          setIsRejected(true);
           setMessage("Call Rejected");
+        } else {
+          // If neither isAccepted nor isRejected is true, call the API again
+          setTimeout(fetchData, 1000); // Wait for 1 second before making the next request (optional)
         }
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
+        // Handle the error here, and you may want to retry the request as well
+        // setTimeout(fetchData, 1000); // Retry after 1 second (optional)
       });
-  }, []); 
+  };
+
+  useEffect(() => {
+    fetchData(); // Initial API call
+  }, []);
 
   useEffect(() => {
     if (!loading && meetElementRef.current) {

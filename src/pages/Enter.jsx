@@ -9,7 +9,7 @@ const Home = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate(`/room/11112`);
+    navigate(`/room/Abcdef`);
   };
   return (
     <div className="home">

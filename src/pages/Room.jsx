@@ -12,20 +12,26 @@ const Room = () => {
   const username = roomId;
 
   const meetElementRef = useRef(null);
-
   useEffect(() => {
-    axios.get("https://stealth-zys3.onrender.com/api/v1/video/call?roomName=Abcdef").then((res) => {
-      console.log(res.data);
-      if (res.data.isAccepted) {
-        setisAccepted(true);
-        setLoading(false);
-        setMessage("Call Accepted");
-      } else if (res.data.isRejected) {
-        setisRejected(true);
-        setMessage("Call Rejected");
-      }
-    });
-  }, [isAccepted, isRejected]);
+    axios
+      .get(
+        "https://stealth-zys3.onrender.com/api/v1/video/call?roomName=Abcdef"
+      )
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.isAccepted) {
+          setisAccepted(true);
+          setLoading(false);
+          setMessage("Call Accepted");
+        } else if (res.data.isRejected) {
+          setisRejected(true);
+          setMessage("Call Rejected");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []); 
 
   useEffect(() => {
     if (!loading && meetElementRef.current) {

@@ -1,15 +1,15 @@
-import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-
+import queryString from "query-string";
 const Home = () => {
-  const [roomCode, setRoomCode] = useState("");
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    const queryParams = queryString.parse(location.search);
+    const roomCodeFromURL = queryParams.roomCode;
+    console.log(roomCodeFromURL);
     e.preventDefault();
-    navigate(`/room/Abcdef`);
+    navigate(`/room/:${roomCodeFromURL}`);
   };
   return (
     <div className="home">

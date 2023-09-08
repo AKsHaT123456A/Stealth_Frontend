@@ -16,9 +16,10 @@ const Room = () => {
   const fetchData = () => {
     axios
       .get(
-        "https://stealth-zys3.onrender.com/api/v1/video/call?roomName=Abcdef"
+        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomId}`
       )
       .then((res) => {
+        console.log("Data fetched!",roomId);
         console.log(res.data);
         if (res.data.isAccepted) {
           setIsAccepted(true);
@@ -28,8 +29,7 @@ const Room = () => {
           setIsRejected(true);
           setMessage("Call Rejected");
         } else {
-          // If neither isAccepted nor isRejected is true, call the API again
-          setTimeout(fetchData, 1000); // Wait for 1 second before making the next request (optional)
+          setTimeout(fetchData, 5000); 
         }
       })
       .catch((error) => {

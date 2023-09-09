@@ -66,7 +66,7 @@ const Room = () => {
 
   return (
     <div className="room">
-      {loading ? <p>{message}</p> : <div ref={meetElementRef} />}
+       <div ref={meetElementRef} />
     </div>
   );
 };

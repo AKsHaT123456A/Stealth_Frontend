@@ -45,8 +45,8 @@ const Room = () => {
 
   useEffect(() => {
     if (!loading && meetElementRef.current) {
-      const appId = 1903949555;
-      const serverSecret = "24bced055e2cc9835f8d16411299bc18";
+      const appId = 1237771667;
+      const serverSecret = "917f2a73f3158849df22df79057a14b1";
       const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
         appId,
         serverSecret,

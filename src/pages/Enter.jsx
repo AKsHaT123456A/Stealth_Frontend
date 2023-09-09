@@ -9,7 +9,7 @@ const Home = () => {
     const roomCodeFromURL = queryParams.roomCode;
     console.log(roomCodeFromURL);
     e.preventDefault();
-    navigate(`/room/${roomCodeFromURL}`);
+    navigate(`/room`);
   };
   return (
     <div className="home">

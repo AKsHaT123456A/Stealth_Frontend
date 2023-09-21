@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import queryString from "query-string";
 import axios from "axios";
@@ -6,7 +6,22 @@ import axios from "axios";
 const Home = () => {
   const navigate = useNavigate();
   const [phone, setPhone] = React.useState("");
+  const [token, setToken] = React.useState("");
+  const fetchData = () => {
+    axios
+      .get(`https://stealth-zys3.onrender.com/api/v1/video/call?roomName=Aks`)
+      .then((res) => {
+        console.log(res.data);
+        setToken(res.data.token);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
 
+  useEffect(() => {
+    fetchData(); // Initial API call
+  }, []); // Only run once on component mount
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
@@ -18,15 +33,15 @@ const Home = () => {
 
       // Construct the data payload
       const dataPayload = {
-        to: "dEmxmFYvSv6x_MdOYa8mlb:APA91bHOZZl8NQoTpAY4Rlo_LgFvQxochosCyvGgVmlj4BpKUG_uNkKh11lrBFb9FAuQ6PuMw4ct4omzPdMh-l1spwjSpHRIyfYeBkJOtyh-8QCZuAXljIEDAUwRCT-NwI0T9SDSc0l9",
+        to: `${token}`,
         notification: {
           title: "Incoming Call",
-          body: `Incoming call from +${phone}`, 
+          body: `Incoming call from +${phone}`,
         },
         data: {
           type: "incomingCall",
-          phoneNo: `+${phone}`, 
-          roomId: "Aks", 
+          phoneNo: `+${phone}`,
+          roomId: "Aks",
         },
       };
       // Make a POST request to the FCM API with the specified headers and data payload
@@ -48,7 +63,6 @@ const Home = () => {
       // Log the room code from the URL
       console.log("Room Code from URL:", roomCodeFromURL);
 
-
       // Navigate to the "/room" route
       navigate(`/room`);
     } catch (error) {
@@ -60,7 +74,12 @@ const Home = () => {
   return (
     <div className="home">
       <form className="form" onSubmit={handleSubmit}>
-        <input type="text" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        <input
+          type="text"
+          placeholder="Phone Number"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
         <button type="submit">Enter Room</button>
       </form>
     </div>

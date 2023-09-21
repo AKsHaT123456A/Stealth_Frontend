@@ -9,9 +9,11 @@ const Room = () => {
 
   const [isAccepted, setIsAccepted] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
+  const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true); // Set to true initially
   const [message, setMessage] = useState("Loading.....");
-
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStreams, setRemoteStreams] = useState([]);
   const meetElementRef = useRef(null);
 
   const fetchData = () => {
@@ -20,6 +22,7 @@ const Room = () => {
       .then((res) => {
         console.log("Data fetched!", roomId);
         console.log(res.data);
+        setToken(res.data.token);
         if (res.data.isAccepted) {
           setIsAccepted(true);
           setMessage("Call Accepted");

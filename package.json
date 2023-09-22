@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@zegocloud/zego-uikit-prebuilt": "^1.8.10",
-    "agora-rtc-sdk": "^3.6.11",
     "axios": "^1.4.0",
     "query-string": "^8.1.0",
     "react": "^18.2.0",

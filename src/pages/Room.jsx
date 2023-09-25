@@ -66,7 +66,7 @@ const Room = () => {
   }, [loading, meetElementRef, username]); // Depend on 'meetElementRef' and 'username'
 
   return (
-    <div className="room">
+    <div className="room" style={{"height":"600px"}}>
       {loading ? <p>{message}</p> : <div ref={meetElementRef} />}
     </div>
   );

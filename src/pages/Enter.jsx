@@ -10,12 +10,14 @@ const Home = () => {
   const [token, setToken] = React.useState("");
   const queryParams = queryString.parse(location.search);
   const roomCodeFromURL = queryParams.roomCode;
+  console.log("Room Code from URL:", roomCodeFromURL);
   const fetchData = () => {
     axios
       .get(`https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}`)
       .then((res) => {
         console.log(res.data);
         setToken(res.data.token);
+        console.log("Token:", token);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -58,6 +60,7 @@ const Home = () => {
           headers,
         }
       );
+      console.log(response.data);
       const requestData = {
         phone,
         roomName: roomCodeFromURL,

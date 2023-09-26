@@ -18,7 +18,7 @@ const Room = () => {
 
   const fetchData = () => {
      axios
-      .get(`https://stealth-zys3.onrender.com/api/v1/video/call?roomName=Aks`)
+      .get(`https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}`)
       .then((res) => {
         console.log("Data fetched!", roomId);
         console.log(res.data);
@@ -51,7 +51,7 @@ const Room = () => {
       const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
         appId,
         serverSecret,
-        "Aks",
+        username,
         Date.now().toString(),
         "username" // Use the 'username' variable
       );

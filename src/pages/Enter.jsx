@@ -84,7 +84,7 @@ const Home = () => {
       console.log("Room Code from URL:", roomCodeFromURL);
 
       // Navigate to the "/room" route
-      navigate(`/room`);
+      navigate(`/room/${roomCodeFromURL}`);
     } catch (error) {
       // Handle any errors that occur during the POST request
       console.error("Error sending FCM message:", error);

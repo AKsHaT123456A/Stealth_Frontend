@@ -1,15 +1,18 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import queryString from "query-string";
 import axios from "axios";
 
 const Home = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [phone, setPhone] = React.useState("");
   const [token, setToken] = React.useState("");
+  const queryParams = queryString.parse(location.search);
+  const roomCodeFromURL = queryParams.roomCode;
   const fetchData = () => {
     axios
-      .get(`https://stealth-zys3.onrender.com/api/v1/video/call?roomName=Aks`)
+      .get(`https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}`)
       .then((res) => {
         console.log(res.data);
         setToken(res.data.token);
@@ -22,6 +25,7 @@ const Home = () => {
   useEffect(() => {
     fetchData(); // Initial API call
   }, []); // Only run once on component mount
+
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
@@ -41,9 +45,11 @@ const Home = () => {
         data: {
           type: "incomingCall",
           phoneNo: `+${phone}`,
-          roomId: "Aks",
+          roomId: `${roomCodeFromURL}`,
         },
       };
+
+
       // Make a POST request to the FCM API with the specified headers and data payload
       const response = await axios.post(
         "https://fcm.googleapis.com/fcm/send",
@@ -52,14 +58,25 @@ const Home = () => {
           headers,
         }
       );
-
-      // Handle the response as needed
-      console.log("FCM API response:", response.data);
+      const requestData = {
+        phone,
+        roomName: roomCodeFromURL,
+      };
+      
+      axios
+        .get(`http://localhost:3000/api/v1/video/getCallDetails?phone=${phone}&roomName=${roomCodeFromURL}`, {
+          data: requestData, // Send the data in the request body
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching call details:", error);
+        });
+      
 
       // Parse query parameters from the location search
-      const queryParams = queryString.parse(location.search);
-      const roomCodeFromURL = queryParams.roomCode;
-
+      
       // Log the room code from the URL
       console.log("Room Code from URL:", roomCodeFromURL);
 

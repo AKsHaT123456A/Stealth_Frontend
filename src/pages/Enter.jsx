@@ -1,19 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import queryString from "query-string";
 import axios from "axios";
+import "./Home.css" 
 
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [phone, setPhone] = React.useState("");
+  const [name, setName] = useState("");
   const [token, setToken] = React.useState("");
   const queryParams = queryString.parse(location.search);
   const roomCodeFromURL = queryParams.roomCode;
   console.log("Room Code from URL:", roomCodeFromURL);
+
   const fetchData = () => {
     axios
-      .get(`https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}`)
+      .get(
+        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}`
+      )
       .then((res) => {
         console.log(res.data);
         setToken(res.data.token);
@@ -52,7 +57,6 @@ const Home = () => {
         },
       };
 
-
       // Make a POST request to the FCM API with the specified headers and data payload
       const response = await axios.post(
         "https://fcm.googleapis.com/fcm/send",
@@ -66,21 +70,23 @@ const Home = () => {
         phone,
         roomName: roomCodeFromURL,
       };
-      
+
       axios
-        .get(`https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${roomCodeFromURL}`, {
-          data: requestData, // Send the data in the request body
-        })
+        .get(
+          `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${roomCodeFromURL}`,
+          {
+            data: requestData, // Send the data in the request body
+          }
+        )
         .then((res) => {
           console.log(res.data);
         })
         .catch((error) => {
           console.error("Error fetching call details:", error.message);
         });
-      
 
       // Parse query parameters from the location search
-      
+
       // Log the room code from the URL
       console.log("Room Code from URL:", roomCodeFromURL);
 
@@ -93,17 +99,32 @@ const Home = () => {
   };
 
   return (
-    <div className="home">
-      <form className="form" onSubmit={handleSubmit}  >
+    <div className="home-container">
+      <p className="additional-text">
+        Please fill in your details to join the live call.
+      </p>
+      <form className="home-form" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          className="input-field"
+          onChange={(e) => setName(e.target.value)}
+        />
         <input
           type="text"
           placeholder="Phone Number"
           value={phone}
-          className="inputField"
+          className="input-field"
           onChange={(e) => setPhone(e.target.value)}
         />
-        <button type="submit" className="inputButton">Enter Room</button>
+        <button type="submit" className="submit-button">
+          Enter Shop
+        </button>
       </form>
+      <p className="additional-text">
+        Your video and mic will be by default off while entering the shop.Enjoy Shopping.
+      </p>
     </div>
   );
 };

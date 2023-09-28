@@ -10,6 +10,8 @@
 .inputField{
   padding: 0.8rem;
   font-size: 15px;
+  display: flex;
+  
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   border: 1.3px solid rgb(184, 177, 177);
@@ -95,4 +97,26 @@
 
 .return-button:hover {
   background-color: #0056b3;
+}
+.loading-message {
+  font-size: 18px;
+  color: #007BFF; /* Blue color */
+  text-align: center;
+  padding: 20px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.loading-message {
+  animation: pulse 1.5s infinite;
 }

@@ -14,7 +14,7 @@ const Room = () => {
   const [isRejected, setIsRejected] = useState(false);
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("Loading...");
+  const [message, setMessage] = useState("Loading... We have informed the store and assistance will be available for you shortly");
   const [callDuration, setCallDuration] = useState(0);
   const [userList, setUserList] = useState([]); // State to store the list of users
 
@@ -75,25 +75,27 @@ const Room = () => {
             (callEndTime - callStartTime) / 1000
           );
           setCallDuration(durationInSeconds);
-          axios.get(`https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${username}&duration=${durationInSeconds}`)
+          axios.get(
+            `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${username}&duration=${durationInSeconds}`
+          );
           // Update the user list when a user leaves the room
           setUserList(users || []);
 
           // Display the leaving screen with the user count
           const leavingScreen = document.createElement("div");
           leavingScreen.innerHTML = `
-  <div class="leaving-screen">
+    <div class="leaving-screen">
     <p class="leaving-message">User left the room.</p>
     <p class="duration-message">Call Duration: ${durationInSeconds} seconds</p>
-    <button class="return-button" onClick={() => navigate("/")}>Return to Previous Page</button>
+    <button class="return-button" type="submit" ${(onclick = () =>
+      navigate("/"))}>Return to Previous Page</button>
     </div>
 `;
 
           meetElementRef.current.innerHTML = "";
           meetElementRef.current.appendChild(leavingScreen);
         },
-
-        showPreJoinView: false,
+        showPreJoinView:false,
         preJoinViewConfig: {
           title: "Live Shop",
         },
@@ -119,7 +121,7 @@ const Room = () => {
   return (
     <div className="room" style={{ height: "30rem" }}>
       {loading ? (
-        <p>{message}</p>
+        <p className="loading-message">{message}</p>
       ) : (
         <div ref={meetElementRef} style={{ height: "80vh" }} />
       )}

@@ -74,7 +74,7 @@ const Room = () => {
             (callEndTime - callStartTime) / 1000
           );
           setCallDuration(durationInSeconds);
-          axios.get(`http://localhost:3000/api/v1/video/getCallDetails?phone=${phone}&roomName=${username}&duration=${durationInSeconds}`)
+          axios.get(`https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${username}&duration=${durationInSeconds}`)
           // Update the user list when a user leaves the room
           setUserList(users || []);
 

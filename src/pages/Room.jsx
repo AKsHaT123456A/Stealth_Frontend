@@ -14,7 +14,9 @@ const Room = () => {
   const [isRejected, setIsRejected] = useState(false);
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("Loading... We have informed the store and assistance will be available for you shortly");
+  const [message, setMessage] = useState(
+    "Loading... We have informed the store and assistance will be available for you shortly"
+  );
   const [callDuration, setCallDuration] = useState(0);
   const [userList, setUserList] = useState([]); // State to store the list of users
 
@@ -84,18 +86,17 @@ const Room = () => {
           // Display the leaving screen with the user count
           const leavingScreen = document.createElement("div");
           leavingScreen.innerHTML = `
-    <div class="leaving-screen">
-    <p class="leaving-message">User left the room.</p>
-    <p class="duration-message">Call Duration: ${durationInSeconds} seconds</p>
-    <button class="return-button" type="submit" ${(onclick = () =>
-      navigate("/"))}>Return to Previous Page</button>
-    </div>
-`;
+            <div class="leaving-screen">
+            <p class="leaving-message">User left the room.</p>
+            <p class="duration-message">Call Duration: ${durationInSeconds} seconds</p>
+            <p>Hope you enjoyed the experience</p>
+        </div>
+  `;
 
           meetElementRef.current.innerHTML = "";
           meetElementRef.current.appendChild(leavingScreen);
         },
-        showPreJoinView:false,
+        showPreJoinView: false,
         preJoinViewConfig: {
           title: "Live Shop",
         },

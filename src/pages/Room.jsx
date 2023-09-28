@@ -32,13 +32,14 @@ const Room = () => {
         if (res.data.isAccepted) {
           setIsAccepted(true);
           setMessage("Call Accepted");
+          setLoading(false);
         } else if (res.data.isRejected) {
           setIsRejected(true);
           setMessage("Call Rejected");
+          setLoading(false);
         } else {
           setTimeout(fetchData, 5000);
         }
-        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);

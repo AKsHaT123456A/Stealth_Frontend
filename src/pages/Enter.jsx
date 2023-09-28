@@ -20,6 +20,7 @@ const Home = () => {
         console.log("Token:", token);
       })
       .catch((error) => {
+        console.log("Error fetching data:", error.message);
         console.error("Error fetching data:", error);
       });
   };
@@ -67,14 +68,14 @@ const Home = () => {
       };
       
       axios
-        .get(`http://localhost:3000/api/v1/video/getCallDetails?phone=${phone}&roomName=${roomCodeFromURL}`, {
+        .get(`https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${roomCodeFromURL}`, {
           data: requestData, // Send the data in the request body
         })
         .then((res) => {
           console.log(res.data);
         })
         .catch((error) => {
-          console.error("Error fetching call details:", error);
+          console.error("Error fetching call details:", error.message);
         });
       
 
@@ -84,7 +85,7 @@ const Home = () => {
       console.log("Room Code from URL:", roomCodeFromURL);
 
       // Navigate to the "/room" route
-      navigate(`/room/${roomCodeFromURL}`);
+      navigate(`/room/${roomCodeFromURL}/${phone}`);
     } catch (error) {
       // Handle any errors that occur during the POST request
       console.error("Error sending FCM message:", error);
@@ -93,14 +94,15 @@ const Home = () => {
 
   return (
     <div className="home">
-      <form className="form" onSubmit={handleSubmit}>
+      <form className="form" onSubmit={handleSubmit}  >
         <input
           type="text"
           placeholder="Phone Number"
           value={phone}
+          className="inputField"
           onChange={(e) => setPhone(e.target.value)}
         />
-        <button type="submit">Enter Room</button>
+        <button type="submit" className="inputButton">Enter Room</button>
       </form>
     </div>
   );

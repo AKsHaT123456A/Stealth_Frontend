@@ -12,7 +12,6 @@ const Room = () => {
 
   const [isAccepted, setIsAccepted] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
-  const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(
     "Loading... We have informed the store and assistance will be available for you shortly"
@@ -30,7 +29,6 @@ const Room = () => {
       .then((res) => {
         console.log("Data fetched!", roomId);
         console.log(res.data);
-        setToken(res.data.token);
         if (res.data.isAccepted) {
           setIsAccepted(true);
           setMessage("Call Accepted");
@@ -91,7 +89,9 @@ const Room = () => {
             <p class="duration-message">Call Duration: ${durationInSeconds} seconds</p>
             <p>Hope you enjoyed the experience</p>
         </div>
+
   `;
+          navigate("/feedback");
 
           meetElementRef.current.innerHTML = "";
           meetElementRef.current.appendChild(leavingScreen);
@@ -126,7 +126,6 @@ const Room = () => {
       ) : (
         <div ref={meetElementRef} style={{ height: "80vh" }} />
       )}
-      <p className="call-duration">Call Duration: {callDuration} seconds</p>
     </div>
   );
 };

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import "./feedback.css"; // Import your CSS file
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 function FeedbackForm() {
+  const { roomName, phone } = useParams();
   const [selectedEmoji, setSelectedEmoji] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
 
@@ -13,7 +16,16 @@ function FeedbackForm() {
     // Handle the submission of selectedEmoji and feedbackText here
     console.log("Selected Emoji:", selectedEmoji);
     console.log("Feedback Text:", feedbackText);
-
+    let dataPayload = {
+      emoji: selectedEmoji,
+      feedback: feedbackText,
+    };
+    axios.post(
+      `https://stealth-zys3.onrender.com/api/v1/auth/feedback/?${roomName}&phone=${phone}`,
+      {
+        dataPayload,
+      }
+    );
     // Clear the form after submission
     setSelectedEmoji("");
     setFeedbackText("");

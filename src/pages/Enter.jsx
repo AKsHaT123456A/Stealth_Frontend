@@ -101,7 +101,7 @@ const Home = () => {
   return (
     <div className="home-container">
       <p className="additional-text">
-        Please fill in your details to join the live call.
+        Please fill in your details FOR lIVE 1-1 call.
       </p>
       <form className="home-form" onSubmit={handleSubmit}>
         <input
@@ -123,7 +123,7 @@ const Home = () => {
         </button>
       </form>
       <p className="additional-text">
-        Your video and mic will be by default off while entering the shop.Enjoy Shopping.
+        Your video and mic will be by default off while entering the shop.Enjoy Shopping!!.
       </p>
     </div>
   );

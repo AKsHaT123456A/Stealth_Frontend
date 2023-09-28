@@ -1,10 +1,10 @@
 
 import "./navbar.css";
+import Image from "../../assets/liviso.png";
 function Navbar() {
 	return (
 		<header>
-			{/* <img src="liviso.jpg" alt="logo" /> */}
-			<h1>LIVISO</h1>
+			<img src={Image} alt="logo" className="logo" />
 		</header>
 	);
 }

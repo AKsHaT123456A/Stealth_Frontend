@@ -78,7 +78,7 @@ const Room = () => {
           setCallDuration(durationInSeconds);
           axios
             .get(
-              `http://localhost:3000/api/v1/video/getCallDetails?phone=${phone}&roomName=${username}&duration=${durationInSeconds}`
+              `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${username}&duration=${durationInSeconds}`
             )
             .then((res) => {
               console.log(res.data);

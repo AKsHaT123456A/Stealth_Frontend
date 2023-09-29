@@ -30,7 +30,7 @@
   .emoji-option {
     font-size: 48px;
     cursor: pointer;
-    margin: 10px 15px;
+    margin: 15px 15px;
     transition: transform 0.2s ease-in-out;
 
   }

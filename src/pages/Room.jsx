@@ -10,7 +10,6 @@ const Room = () => {
   const { roomId, phone } = useParams();
   const username = roomId;
 
-  const [isAccepted, setIsAccepted] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(
@@ -30,13 +29,11 @@ const Room = () => {
         console.log("Data fetched!", roomId);
         console.log(res.data);
         if (res.data.isAccepted) {
-          setIsAccepted(true);
-          setMessage("Call Accepted");
           setLoading(false);
         } else if (res.data.isRejected) {
           setIsRejected(true);
           // setMessage("Call Rejected");
-          setMessage("Store is busy. Please try again later")
+          setMessage("Store is busy. Please try again later");
           setLoading(false);
         } else {
           setTimeout(fetchData, 5000);
@@ -127,6 +124,8 @@ const Room = () => {
   return (
     <div className="room" style={{ height: "30rem" }}>
       {loading ? (
+        <p className="loading-message">{message}</p>
+      ) : isRejected ? (
         <p className="loading-message">{message}</p>
       ) : (
         <div ref={meetElementRef} style={{ height: "80vh" }} />

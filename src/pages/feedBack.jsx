@@ -25,7 +25,9 @@ function FeedbackForm() {
       {
         dataPayload,
       }
-    );
+    ).then((res)=>{
+        console.log(res.data);
+    });
     // Clear the form after submission
     setSelectedEmoji("");
     setFeedbackText("");

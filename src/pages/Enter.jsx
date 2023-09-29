@@ -101,7 +101,7 @@ const Home = () => {
   return (
     <div className="home-container">
       <p className="additional-text">
-        Please fill in your details FOR lIVE 1-1 call.
+        Please fill in your details for LIVE 1-1 call.
       </p>
       <form className="home-form" onSubmit={handleSubmit}>
         <input

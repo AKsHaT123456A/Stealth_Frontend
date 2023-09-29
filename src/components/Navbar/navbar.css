@@ -53,6 +53,14 @@ nav {
 	display: flex;
 	align-items: center;
 }
+.logo {
+	display: flex;
+	height: 16rem;
+	width: 12rem;
+	position:relative;
+	top: 2rem;
+	
+}
 
 @media only screen and (max-width: 1024px) {
 	header .nav-btn {

@@ -1,6 +1,6 @@
 
 import "./navbar.css";
-import Image from "../../assets/liviso.png";
+import Image from "../../assets/favicon.png";
 function Navbar() {
 	return (
 		<header>

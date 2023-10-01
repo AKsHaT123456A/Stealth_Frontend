@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./feedback.css";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -8,6 +8,23 @@ import "react-toastify/dist/ReactToastify.css"; // Import the CSS for Toastify
 
 function FeedbackForm() {
   const { roomName, phone } = useParams();
+  const fetchData = () => {
+    axios
+      .get(
+        `https://stealth-zys3.onrender.com/api/v1/video/reset/${roomName}/${phone}`
+      )
+      .then(() => {
+        console.log("Success");
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const [selectedEmoji, setSelectedEmoji] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
 

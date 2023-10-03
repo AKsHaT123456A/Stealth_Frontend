@@ -12,8 +12,8 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/room/:roomId/:phone" element={<Room />} />
-          <Route path="/feedback/:roomName/:phone" element={<FeedbackForm />} />
+          <Route path="/room/:roomId/:phone/:id" element={<Room />} />
+          <Route path="/feedback/:roomName/:phone/" element={<FeedbackForm />} />
         </Routes>
       </div>
     </>

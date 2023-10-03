@@ -7,18 +7,18 @@ import "./Home.css";
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const id = useParams();
   const [phone, setPhone] = React.useState("");
   const [name, setName] = useState("");
   const [token, setToken] = React.useState("");
   const queryParams = queryString.parse(location.search);
   const roomCodeFromURL = queryParams.roomCode;
+  const id = queryParams.id;
   console.log("Room Code from URL:", roomCodeFromURL);
   console.log("id", id);
   const fetchData = () => {
     axios
       .get(
-        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}`
+        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}`
       )
       .then((res) => {
         console.log(res.data);
@@ -36,13 +36,11 @@ const Home = () => {
   }, []); // Only run once on component mount
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       axios
         .get(
-          `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${roomCodeFromURL}`,
-          {
-            data: requestData, // Send the data in the request body
-          }
+          `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?id=${id}&roomName=${roomCodeFromURL}&phone=${phone}&token=${token}`,
         )
         .then((res) => {
           console.log(res.data);
@@ -80,10 +78,6 @@ const Home = () => {
         }
       );
       console.log(response.data);
-      const requestData = {
-        phone,
-        roomName: roomCodeFromURL,
-      };
 
       // Parse query parameters from the location search
 
@@ -91,7 +85,7 @@ const Home = () => {
       console.log("Room Code from URL:", roomCodeFromURL);
 
       // Navigate to the "/room" route
-      navigate(`/room/${roomCodeFromURL}/${phone}`);
+      navigate(`/room/${roomCodeFromURL}/${phone}/${id}`);
     } catch (error) {
       // Handle any errors that occur during the POST request
       console.error("Error sending FCM message:", error);

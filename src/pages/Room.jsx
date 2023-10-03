@@ -7,7 +7,7 @@ import "../App.css"; // Import the CSS file for styling
 
 const Room = () => {
   const navigate = useNavigate();
-  const { roomId, phone } = useParams();
+  const { roomId, phone, id } = useParams();
   const username = roomId;
 
   const [isRejected, setIsRejected] = useState(false);
@@ -24,19 +24,18 @@ const Room = () => {
 
     const stopFetchingData = () => {
       if (!hasStopped) {
-        setIsRejected(true);
         setMessage("Missed Call");
-        setLoading(false);
+        setLoading(true);
         hasStopped = true; // Set the flag to true to prevent further API calls
       }
     };
 
     // Set a timeout to stop fetching data after 5 seconds
-    const timeoutId = setTimeout(stopFetchingData, 5000);
+    const timeoutId = setTimeout(stopFetchingData, 15000);
 
     axios
       .get(
-        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&phone=${phone}`
+        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&id=${id}`
       )
       .then((res) => {
         console.log("Data fetched!", roomId);
@@ -109,7 +108,7 @@ const Room = () => {
         </div>
 
   `;
-          navigate(`/feedback/${username}/${phone}`);
+          navigate(`/feedback/${username}/${id}`);
 
           meetElementRef.current.innerHTML = "";
           meetElementRef.current.appendChild(leavingScreen);
@@ -135,7 +134,7 @@ const Room = () => {
         videoResolutionDefault: ZegoUIKitPrebuilt.VideoResolution_360P,
       });
     }
-  }, [loading, meetElementRef, username, phone]);
+  }, [loading, meetElementRef, username, id]);
 
   return (
     <div className="room" style={{ height: "30rem" }}>

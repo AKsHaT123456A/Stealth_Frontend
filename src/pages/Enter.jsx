@@ -16,20 +16,19 @@ const Home = () => {
   const id = queryParams.id;
   console.log("Room Code from URL:", roomCodeFromURL);
   console.log("id", id);
-  const setData=()=>{
+  const setData = () => {
     axios
-        .get(
-          `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?id=${id}&phone=${phoneFromURL}&roomName=${roomCodeFromURL}`,
-        )
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching call details:", error.message);
-        });
-  }
+      .get(
+        `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?id=${id}&phone=${phoneFromURL}&roomName=${roomCodeFromURL}`
+      )
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching call details:", error.message);
+      });
+  };
   const fetchData = () => {
-    
     axios
       .get(
         `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}`
@@ -48,31 +47,14 @@ const Home = () => {
   useEffect(() => {
     fetchData(); // Initial API call
   }, []); // Only run once on component mount
-useEffect(()=>{
-  setData();
-}, [roomCodeFromURL]); // Only run once on component
+  useEffect(() => {
+    setData();
+  }, [roomCodeFromURL]); // Only run once on component
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      axios
-        .get(
-          `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?id=${id}&roomName=${roomCodeFromURL}&phone=${phone}&token=${token}`,
-        )
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching call details:", error.message);
-        });
-      e.preventDefault();
-      // Define the headers for the HTTP request
-      const headers = {
-        Authorization:
-          "key=AAAAjOGkb6k:APA91bEE9QdPorav9k-vgR61kKY21iNXoB4ZC_X-SAuLSG8p61shpYRWClG1AHa6UQfocCpin2uUSM9nA-iQyFwRIKWcqdxeaA8AYzwa4LGEkB-XG6JYkSU7Tlxa3VrqkAxZC4IcVemE",
-      };
-
-      // Construct the data payload
-      const dataPayload = {
+      // Construct the data payload for the "Incoming Call" notification
+      const incomingCallPayload = {
         to: `${token}`,
         notification: {
           title: "Incoming Call",
@@ -85,20 +67,50 @@ useEffect(()=>{
         },
       };
 
-      // Make a POST request to the FCM API with the specified headers and data payload
-      const response = await axios.post(
+      // Make a POST request to send the "Incoming Call" notification
+      const incomingCallResponse = await axios.post(
         "https://fcm.googleapis.com/fcm/send",
-        dataPayload, // Provide the data payload
+        incomingCallPayload,
         {
-          headers,
+          headers: {
+            Authorization:
+              "key=AAAAjOGkb6k:APA91bEE9QdPorav9k-vgR61kKY21iNXoB4ZC_X-SAuLSG8p61shpYRWClG1AHa6UQfocCpin2uUSM9nA-iQyFwRIKWcqdxeaA8AYzwa4LGEkB-XG6JYkSU7Tlxa3VrqkAxZC4IcVemE",
+          },
         }
       );
-      console.log(response.data);
 
-      // Parse query parameters from the location search
+      console.log(incomingCallResponse.data);
 
-      // Log the room code from the URL
-      console.log("Room Code from URL:", roomCodeFromURL);
+      // Schedule a "Missed Call" notification after 15 seconds
+      setTimeout(async () => {
+        // Construct the data payload for the "Missed Call" notification
+        const missedCallPayload = {
+          to: `${token}`,
+          notification: {
+            title: "Missed Call",
+            body: `Missed call from +${phone}`,
+          },
+          data: {
+            type: "missedCall",
+            phoneNo: `+${phone}`,
+            roomId: `${roomCodeFromURL}`,
+          },
+        };
+
+        // Make a POST request to send the "Missed Call" notification
+        const missedCallResponse = await axios.post(
+          "https://fcm.googleapis.com/fcm/send",
+          missedCallPayload,
+          {
+            headers: {
+              Authorization:
+                "key=AAAAjOGkb6k:APA91bEE9QdPorav9k-vgR61kKY21iNXoB4ZC_X-SAuLSG8p61shpYRWClG1AHa6UQfocCpin2uUSM9nA-iQyFwRIKWcqdxeaA8AYzwa4LGEkB-XG6JYkSU7Tlxa3VrqkAxZC4IcVemE",
+            },
+          }
+        );
+
+        console.log(missedCallResponse.data);
+      }, 15000);
 
       // Navigate to the "/room" route
       navigate(`/room/${roomCodeFromURL}/${phone}/${id}`);

@@ -35,7 +35,7 @@ const Room = () => {
 
     axios
       .get(
-        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&id=${id}`
+        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&id=${id}&phone=${phone}`
       )
       .then((res) => {
         console.log("Data fetched!", roomId);

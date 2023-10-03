@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import queryString from "query-string";
 import axios from "axios";
-import "./Home.css" 
+import "./Home.css";
 
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const id = useParams();
   const [phone, setPhone] = React.useState("");
   const [name, setName] = useState("");
   const [token, setToken] = React.useState("");
   const queryParams = queryString.parse(location.search);
   const roomCodeFromURL = queryParams.roomCode;
   console.log("Room Code from URL:", roomCodeFromURL);
-
+  console.log("id", id);
   const fetchData = () => {
     axios
       .get(
@@ -36,6 +37,19 @@ const Home = () => {
 
   const handleSubmit = async (e) => {
     try {
+      axios
+        .get(
+          `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${roomCodeFromURL}`,
+          {
+            data: requestData, // Send the data in the request body
+          }
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching call details:", error.message);
+        });
       e.preventDefault();
       // Define the headers for the HTTP request
       const headers = {
@@ -70,20 +84,6 @@ const Home = () => {
         phone,
         roomName: roomCodeFromURL,
       };
-
-      axios
-        .get(
-          `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${roomCodeFromURL}`,
-          {
-            data: requestData, // Send the data in the request body
-          }
-        )
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching call details:", error.message);
-        });
 
       // Parse query parameters from the location search
 
@@ -123,7 +123,8 @@ const Home = () => {
         </button>
       </form>
       <p className="additional-text">
-        Your video and mic will be by default off while entering the shop.Enjoy Shopping!!.
+        Your video and mic will be by default off while entering the shop.Enjoy
+        Shopping!!.
       </p>
     </div>
   );

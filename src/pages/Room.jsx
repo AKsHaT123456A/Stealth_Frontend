@@ -19,23 +19,38 @@ const Room = () => {
   const [userList, setUserList] = useState([]); // State to store the list of users
 
   const meetElementRef = useRef(null);
-
   const fetchData = () => {
+    let hasStopped = false; // Flag to track whether the API call has stopped
+
+    const stopFetchingData = () => {
+      if (!hasStopped) {
+        setIsRejected(true);
+        setMessage("Missed Call");
+        setLoading(false);
+        hasStopped = true; // Set the flag to true to prevent further API calls
+      }
+    };
+
+    // Set a timeout to stop fetching data after 5 seconds
+    const timeoutId = setTimeout(stopFetchingData, 5000);
+
     axios
       .get(
-        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}`
+        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&phone=${phone}`
       )
       .then((res) => {
         console.log("Data fetched!", roomId);
         console.log(res.data);
         if (res.data.isAccepted) {
           setLoading(false);
+          clearTimeout(timeoutId); // Clear the timeout to stop further API calls
         } else if (res.data.isRejected) {
           setIsRejected(true);
-          // setMessage("Call Rejected");
           setMessage("Store is busy. Please try again later");
           setLoading(false);
+          clearTimeout(timeoutId); // Clear the timeout to stop further API calls
         } else {
+          // Continue fetching data after 5 seconds
           setTimeout(fetchData, 5000);
         }
       })
@@ -43,6 +58,7 @@ const Room = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
         setMessage("Error fetching data");
+        clearTimeout(timeoutId); // Clear the timeout in case of an error
       });
   };
 

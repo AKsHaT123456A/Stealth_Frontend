@@ -12,10 +12,24 @@ const Home = () => {
   const [token, setToken] = React.useState("");
   const queryParams = queryString.parse(location.search);
   const roomCodeFromURL = queryParams.roomCode;
+  const phoneFromURL = queryParams.phone;
   const id = queryParams.id;
   console.log("Room Code from URL:", roomCodeFromURL);
   console.log("id", id);
+  const setData=()=>{
+    axios
+        .get(
+          `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?id=${id}&phone=${phoneFromURL}&roomName=${roomCodeFromURL}`,
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching call details:", error.message);
+        });
+  }
   const fetchData = () => {
+    
     axios
       .get(
         `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}`
@@ -34,7 +48,9 @@ const Home = () => {
   useEffect(() => {
     fetchData(); // Initial API call
   }, []); // Only run once on component mount
-
+useEffect(()=>{
+  setData();
+}, [roomCodeFromURL]); // Only run once on component
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

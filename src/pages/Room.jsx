@@ -31,7 +31,7 @@ const Room = () => {
     };
 
     // Set a timeout to stop fetching data after 5 seconds
-    const timeoutId = setTimeout(stopFetchingData, 60000);
+    const timeoutId = setTimeout(stopFetchingData, 90000);
 
     axios
       .get(
@@ -40,7 +40,10 @@ const Room = () => {
       .then((res) => {
         console.log("Data fetched!", roomId);
         console.log(res.data);
-        if (res.data.isAccepted) {
+        if(!res.data.isOpen){
+          setMessage("Store is closed. Please try again later");
+        }
+        else if (res.data.isAccepted) {
           setIsAccepted(true);
           setLoading(false);
           hasStopped = true;

@@ -110,7 +110,7 @@ const Home = () => {
         );
 
         console.log(missedCallResponse.data);
-      }, 15000);
+      }, 60000);
 
       // Navigate to the "/room" route
       navigate(`/room/${roomCodeFromURL}/${phone}/${id}`);

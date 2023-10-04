@@ -11,6 +11,7 @@ const Room = () => {
   const username = roomId;
 
   const [isRejected, setIsRejected] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(
     "Loading... We have informed the store and assistance will be available for you shortly"
@@ -21,9 +22,8 @@ const Room = () => {
   const meetElementRef = useRef(null);
   const fetchData = () => {
     let hasStopped = false; // Flag to track whether the API call has stopped
-
     const stopFetchingData = () => {
-      if (!hasStopped) {
+      if ((!hasStopped&&(!isAccepted&&isRejected))||(!hasStopped&&(isAccepted&&!isRejected))) {
         setMessage("Missed Call");
         setLoading(true);
         hasStopped = true; // Set the flag to true to prevent further API calls
@@ -31,7 +31,7 @@ const Room = () => {
     };
 
     // Set a timeout to stop fetching data after 5 seconds
-    const timeoutId = setTimeout(stopFetchingData, 15000);
+    const timeoutId = setTimeout(stopFetchingData, 60000);
 
     axios
       .get(
@@ -41,12 +41,15 @@ const Room = () => {
         console.log("Data fetched!", roomId);
         console.log(res.data);
         if (res.data.isAccepted) {
+          setIsAccepted(true);
           setLoading(false);
+          hasStopped = true;
           clearTimeout(timeoutId); // Clear the timeout to stop further API calls
         } else if (res.data.isRejected) {
           setIsRejected(true);
           setMessage("Store is busy. Please try again later");
           setLoading(false);
+          hasStopped = true;
           clearTimeout(timeoutId); // Clear the timeout to stop further API calls
         } else {
           // Continue fetching data after 5 seconds

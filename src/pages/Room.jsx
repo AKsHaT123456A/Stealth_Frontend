@@ -16,55 +16,57 @@ const Room = () => {
   const [message, setMessage] = useState(
     "Loading... We have informed the store and assistance will be available for you shortly"
   );
-  const [callDuration, setCallDuration] = useState(0);
-  const [userList, setUserList] = useState([]); // State to store the list of users
 
   const meetElementRef = useRef(null);
   const fetchData = () => {
     let hasStopped = false; // Flag to track whether the API call has stopped
     const stopFetchingData = () => {
-      if ((!hasStopped&&(!isAccepted&&isRejected))||(!hasStopped&&(isAccepted&&!isRejected))) {
-        setMessage("Missed Call");
+      if (!hasStopped && !isAccepted && !isRejected) {
+        setMessage(
+          " Currently shop is closed. Try again between 10:00 am and 6:00pm"
+        );
         setLoading(true);
         hasStopped = true; // Set the flag to true to prevent further API calls
       }
     };
 
     // Set a timeout to stop fetching data after 5 seconds
-    const timeoutId = setTimeout(stopFetchingData, 90000);
-
-    axios
-      .get(
-        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&id=${id}&phone=${phone}`
-      )
-      .then((res) => {
-        console.log("Data fetched!", roomId);
-        console.log(res.data);
-        if(!res.data.isOpen){
-          setMessage("Store is closed. Please try again later");
-        }
-        else if (res.data.isAccepted) {
-          setIsAccepted(true);
+    const timeoutId = setTimeout(stopFetchingData, 30000);
+    if (!hasStopped) {
+      axios
+        .get(
+          `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&id=${id}&phone=${phone}`
+        )
+        .then((res) => {
+          console.log("Data fetched!", roomId);
+          console.log(res.data);
+          if (!res.data.isOpen) {
+            setMessage("Store is closed. Please try again later");
+          } else if (res.data.isAccepted) {
+            setIsAccepted(true);
+            setLoading(false);
+            hasStopped = true;
+            clearTimeout(timeoutId); // Clear the timeout to stop further API calls
+          } else if (res.data.isRejected) {
+            setIsRejected(true);
+            setMessage(
+              " It seems like shop is experiencing high traffic. Please try again later!!!"
+            );
+            setLoading(false);
+            hasStopped = true;
+            clearTimeout(timeoutId); // Clear the timeout to stop further API calls
+          } else {
+            // Continue fetching data after 5 seconds
+            setTimeout(fetchData, 5000);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
           setLoading(false);
-          hasStopped = true;
-          clearTimeout(timeoutId); // Clear the timeout to stop further API calls
-        } else if (res.data.isRejected) {
-          setIsRejected(true);
-          setMessage("Store is busy. Please try again later");
-          setLoading(false);
-          hasStopped = true;
-          clearTimeout(timeoutId); // Clear the timeout to stop further API calls
-        } else {
-          // Continue fetching data after 5 seconds
-          setTimeout(fetchData, 5000);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-        setMessage("Error fetching data");
-        clearTimeout(timeoutId); // Clear the timeout in case of an error
-      });
+          setMessage("Error fetching data");
+          clearTimeout(timeoutId); // Clear the timeout in case of an error
+        });
+    }
   };
 
   useEffect(() => {
@@ -93,7 +95,6 @@ const Room = () => {
           const durationInSeconds = Math.floor(
             (callEndTime - callStartTime) / 1000
           );
-          setCallDuration(durationInSeconds);
           axios
             .get(
               `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${username}&duration=${durationInSeconds}&id=${id}`
@@ -101,9 +102,6 @@ const Room = () => {
             .then((res) => {
               console.log(res.data);
             });
-          // Update the user list when a user leaves the room
-          setUserList(users || []);
-
           // Display the leaving screen with the user count
           const leavingScreen = document.createElement("div");
           leavingScreen.innerHTML = `

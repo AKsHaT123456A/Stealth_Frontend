@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import queryString from "query-string";
 import axios from "axios";
 import "./Home.css";
@@ -10,16 +10,18 @@ const Home = () => {
   const [phone, setPhone] = React.useState("");
   const [name, setName] = useState("");
   const [token, setToken] = React.useState("");
+  const [open, setOpen] = React.useState("");
   const queryParams = queryString.parse(location.search);
   const roomCodeFromURL = queryParams.roomCode;
   const phoneFromURL = queryParams.phone;
   const id = queryParams.id;
   console.log("Room Code from URL:", roomCodeFromURL);
   console.log("id", id);
+  console.log("phone", phoneFromURL);
   const setData = () => {
     axios
       .get(
-        `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?id=${id}&phone=${phoneFromURL}&roomName=${roomCodeFromURL}`
+        `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phoneFromURL}&id=${id}&roomName=${roomCodeFromURL}`
       )
       .then((res) => {
         console.log(res.data);
@@ -27,16 +29,15 @@ const Home = () => {
       .catch((error) => {
         console.error("Error fetching call details:", error.message);
       });
-  };
-  const fetchData = () => {
-    axios
+      axios
       .get(
-        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}`
+        `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}&phone=${phoneFromURL}`
       )
       .then((res) => {
+        console.log(open);
         console.log(res.data);
         setToken(res.data.token);
-        console.log("Token:", token);
+        setOpen(res.data.isOpen);
       })
       .catch((error) => {
         console.log("Error fetching data:", error.message);
@@ -45,62 +46,42 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchData(); // Initial API call
-  }, []); // Only run once on component mount
-  useEffect(() => {
     setData();
+    // fetchData(); // Initial API call
   }, [roomCodeFromURL]); // Only run once on component
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      axios
+        .get(
+          `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}&phone=${phone}`
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.log("Error fetching data:", error.message);
+          console.error("Error fetching data:", error);
+        });
       // Construct the data payload for the "Incoming Call" notification
-      const incomingCallPayload = {
-        to: `${token}`,
-        notification: {
-          title: "Incoming Call",
-          body: `Incoming call from +${phone}`,
-        },
-        data: {
-          type: "incomingCall",
-          phoneNo: `+${phone}`,
-          roomId: `${roomCodeFromURL}`,
-        },
-      };
-
-      // Make a POST request to send the "Incoming Call" notification
-      const incomingCallResponse = await axios.post(
-        "https://fcm.googleapis.com/fcm/send",
-        incomingCallPayload,
-        {
-          headers: {
-            Authorization:
-              "key=AAAAjOGkb6k:APA91bEE9QdPorav9k-vgR61kKY21iNXoB4ZC_X-SAuLSG8p61shpYRWClG1AHa6UQfocCpin2uUSM9nA-iQyFwRIKWcqdxeaA8AYzwa4LGEkB-XG6JYkSU7Tlxa3VrqkAxZC4IcVemE",
-          },
-        }
-      );
-
-      console.log(incomingCallResponse.data);
-
-      // Schedule a "Missed Call" notification after 15 seconds
-      setTimeout(async () => {
-        // Construct the data payload for the "Missed Call" notification
-        const missedCallPayload = {
+      if (open) {
+        const incomingCallPayload = {
           to: `${token}`,
           notification: {
-            title: "Missed Call",
-            body: `Missed call from +${phone}`,
+            title: "Incoming Call",
+            body: `Incoming call from +${phone}`,
           },
           data: {
-            type: "missedCall",
+            type: "incomingCall",
             phoneNo: `+${phone}`,
             roomId: `${roomCodeFromURL}`,
           },
         };
 
-        // Make a POST request to send the "Missed Call" notification
-        const missedCallResponse = await axios.post(
+        // Make a POST request to send the "Incoming Call" notification
+        const incomingCallResponse = await axios.post(
           "https://fcm.googleapis.com/fcm/send",
-          missedCallPayload,
+          incomingCallPayload,
           {
             headers: {
               Authorization:
@@ -109,9 +90,38 @@ const Home = () => {
           }
         );
 
-        console.log(missedCallResponse.data);
-      }, 60000);
+        console.log(incomingCallResponse.data);
 
+        // Schedule a "Missed Call" notification after 15 seconds
+        setTimeout(async () => {
+          // Construct the data payload for the "Missed Call" notification
+          const missedCallPayload = {
+            to: `${token}`,
+            notification: {
+              title: "Missed Call",
+              body: `Missed call from +${phone}`,
+            },
+            data: {
+              type: "missedCall",
+              phoneNo: `+${phone}`,
+              roomId: `${roomCodeFromURL}`,
+            },
+          };
+          // Make a POST request to send the "Missed Call" notification
+          const missedCallResponse = await axios.post(
+            "https://fcm.googleapis.com/fcm/send",
+            missedCallPayload,
+            {
+              headers: {
+                Authorization:
+                  "key=AAAAjOGkb6k:APA91bEE9QdPorav9k-vgR61kKY21iNXoB4ZC_X-SAuLSG8p61shpYRWClG1AHa6UQfocCpin2uUSM9nA-iQyFwRIKWcqdxeaA8AYzwa4LGEkB-XG6JYkSU7Tlxa3VrqkAxZC4IcVemE",
+              },
+            }
+          );
+
+          console.log(missedCallResponse.data);
+        }, 60000);
+      }
       // Navigate to the "/room" route
       navigate(`/room/${roomCodeFromURL}/${phone}/${id}`);
     } catch (error) {

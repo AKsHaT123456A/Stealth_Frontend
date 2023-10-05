@@ -14,17 +14,19 @@ const Room = () => {
   const [isAccepted, setIsAccepted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(
-    "Loading... We have informed the store and assistance will be available for you shortly"
+    "Loading... We have informed the store, and assistance will be available for you shortly"
   );
 
   const meetElementRef = useRef(null);
-  const fetchData = () => {
-    let hasStopped = false; // Flag to track whether the API call has stopped
+
+  useEffect(() => {
+    let timeoutId; // Timer ID for the 1-minute delay
+    let isMissed = localStorage.getItem("isMissed"); // Flag to track whether the call was missed
     const stopFetchingData = async () => {
-      if (!hasStopped && !isAccepted && !isRejected) {
-        console.log(hasStopped, isAccepted, isRejected);
+      localStorage.setItem("isMissed", true);
+      if (isMissed) {
         setMessage(
-          " It seems like shop is experiencing high traffic. Please try again later!!!"
+          "It seems like the shop is experiencing high traffic. Please try again later!!!"
         );
         setLoading(true);
         const missedCallPayload = {
@@ -50,55 +52,54 @@ const Room = () => {
             },
           }
         );
-        hasStopped = true;
       }
     };
 
-    // Set a timeout to stop fetching data after 5 seconds
-    const timeoutId = setTimeout(stopFetchingData, 30000);
-    if (!hasStopped) {
-      axios
-        .get(
-          `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&id=${id}&phone=${phone}`
-        )
-        .then((res) => {
-          console.log("Data fetched!", roomId);
-          console.log(res.data);
-          if (!res.data.isOpen) {
-            setMessage(
-              "Currently shop is closed. Try again between 10:00 am and 6:00pm"
-            );
-          } else if (res.data.isAccepted) {
-            setIsAccepted(true);
-            setLoading(false);
-            hasStopped = true;
-            clearTimeout(timeoutId); // Clear the timeout to stop further API calls
-          } else if (res.data.isRejected) {
-            setIsRejected(true);
-            console.log("HI");
-            setMessage(
-              " It seems like shop is experiencing high traffic. Please try again later!!!"
-            );
-            setLoading(false);
-            hasStopped = true;
-            clearTimeout(timeoutId); // Clear the timeout to stop further API calls
-          } else {
-            // Continue fetching data after 5 seconds
-            setTimeout(fetchData, 5000);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          setLoading(false);
-          setMessage("Error fetching data");
-          clearTimeout(timeoutId); // Clear the timeout in case of an error
-        });
-    }
-  };
+    // Set a timer to call stopFetchingData after 1 minute if isAccepted and isRejected are still false
+    const startStopTimer = () => {
+      timeoutId = setTimeout(stopFetchingData, 60000); // 1 minute delay
+    };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&id=${id}&phone=${phone}`
+        );
+        console.log("Data fetched!", roomId);
+        console.log(res.data);
+        if (!res.data.isOpen) {
+          setMessage(
+            "Currently, the shop is closed. Try again between 10:00 am and 6:00 pm"
+          );
+        } else if (res.data.isAccepted) {
+          localStorage.setItem("isMissed", false);
+          setIsAccepted(true);
+          setLoading(false);
+          clearTimeout(timeoutId); // Clear the timer
+        } else if (res.data.isRejected) {
+          localStorage.setItem("isMissed", false);
+          setIsRejected(true);
+          console.log("HI");
+          setMessage(
+            "It seems like the shop is experiencing high traffic. Please try again later!!!"
+          );
+          setLoading(false);
+          clearTimeout(timeoutId); // Clear the timer
+        } else {
+          // Continue fetching data after 5 seconds
+          setTimeout(fetchData, 5000);
+          startStopTimer(); // Start the timer after the initial call
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+        setMessage("Error fetching data");
+        clearTimeout(timeoutId); // Clear the timer in case of an error
+      }
+    };
+
+    fetchData(); // Call the initial data fetching function
+  }, [username, id, phone, roomId, token]);
 
   useEffect(() => {
     if (!loading && meetElementRef.current) {
@@ -165,7 +166,7 @@ const Room = () => {
         videoResolutionDefault: ZegoUIKitPrebuilt.VideoResolution_360P,
       });
     }
-  }, [loading, meetElementRef, username, id]);
+  }, [loading, meetElementRef, username, id, phone, navigate]);
 
   return (
     <div className="room" style={{ height: "30rem" }}>

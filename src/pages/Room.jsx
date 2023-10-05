@@ -23,7 +23,7 @@ const Room = () => {
     const stopFetchingData = () => {
       if (!hasStopped && !isAccepted && !isRejected) {
         setMessage(
-          " Currently shop is closed. Try again between 10:00 am and 6:00pm"
+          " It seems like shop is experiencing high traffic. Please try again later!!!"
         );
         setLoading(true);
         hasStopped = true; // Set the flag to true to prevent further API calls
@@ -41,7 +41,7 @@ const Room = () => {
           console.log("Data fetched!", roomId);
           console.log(res.data);
           if (!res.data.isOpen) {
-            setMessage("Store is closed. Please try again later");
+            setMessage("Currently shop is closed. Try again between 10:00 am and 6:00pm");
           } else if (res.data.isAccepted) {
             setIsAccepted(true);
             setLoading(false);

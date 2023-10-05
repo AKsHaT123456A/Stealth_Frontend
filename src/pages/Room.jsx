@@ -22,11 +22,12 @@ const Room = () => {
     let hasStopped = false; // Flag to track whether the API call has stopped
     const stopFetchingData = () => {
       if (!hasStopped && !isAccepted && !isRejected) {
+        console.log(hasStopped, isAccepted, isRejected);
         setMessage(
           " It seems like shop is experiencing high traffic. Please try again later!!!"
         );
         setLoading(true);
-        hasStopped = true; // Set the flag to true to prevent further API calls
+        hasStopped = true;
       }
     };
 
@@ -41,7 +42,9 @@ const Room = () => {
           console.log("Data fetched!", roomId);
           console.log(res.data);
           if (!res.data.isOpen) {
-            setMessage("Currently shop is closed. Try again between 10:00 am and 6:00pm");
+            setMessage(
+              "Currently shop is closed. Try again between 10:00 am and 6:00pm"
+            );
           } else if (res.data.isAccepted) {
             setIsAccepted(true);
             setLoading(false);
@@ -49,6 +52,7 @@ const Room = () => {
             clearTimeout(timeoutId); // Clear the timeout to stop further API calls
           } else if (res.data.isRejected) {
             setIsRejected(true);
+            console.log("HI");
             setMessage(
               " It seems like shop is experiencing high traffic. Please try again later!!!"
             );

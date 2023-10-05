@@ -73,7 +73,7 @@ const Home = () => {
           },
           data: {
             type: "incomingCall",
-            phoneNo: `+${phone}`,
+            phoneNo: `${phone}`,
             roomId: `${roomCodeFromURL}`,
           },
         };
@@ -103,7 +103,7 @@ const Home = () => {
             },
             data: {
               type: "missedCall",
-              phoneNo: `+${phone}`,
+              phoneNo: `${phone}`,
               roomId: `${roomCodeFromURL}`,
             },
           };

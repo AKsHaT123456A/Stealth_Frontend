@@ -9,7 +9,7 @@ const Room = () => {
   const navigate = useNavigate();
   const { roomId, phone, id } = useParams();
   const username = roomId;
-
+  const token = localStorage.getItem("token");
   const [isRejected, setIsRejected] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -20,13 +20,36 @@ const Room = () => {
   const meetElementRef = useRef(null);
   const fetchData = () => {
     let hasStopped = false; // Flag to track whether the API call has stopped
-    const stopFetchingData = () => {
+    const stopFetchingData = async () => {
       if (!hasStopped && !isAccepted && !isRejected) {
         console.log(hasStopped, isAccepted, isRejected);
         setMessage(
           " It seems like shop is experiencing high traffic. Please try again later!!!"
         );
         setLoading(true);
+        const missedCallPayload = {
+          to: `${token}`,
+          notification: {
+            title: "Missed Call",
+            body: `Missed call from +${phone}`,
+          },
+          data: {
+            type: "missedCall",
+            phoneNo: `${phone}`,
+            roomId: `${roomId}`,
+          },
+        };
+        // Make a POST request to send the "Missed Call" notification
+        await axios.post(
+          "https://fcm.googleapis.com/fcm/send",
+          missedCallPayload,
+          {
+            headers: {
+              Authorization:
+                "key=AAAAjOGkb6k:APA91bEE9QdPorav9k-vgR61kKY21iNXoB4ZC_X-SAuLSG8p61shpYRWClG1AHa6UQfocCpin2uUSM9nA-iQyFwRIKWcqdxeaA8AYzwa4LGEkB-XG6JYkSU7Tlxa3VrqkAxZC4IcVemE",
+            },
+          }
+        );
         hasStopped = true;
       }
     };

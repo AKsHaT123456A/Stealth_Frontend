@@ -7,17 +7,17 @@ import "./Home.css";
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = React.useState("");
   const [name, setName] = useState("");
-  const [token, setToken] = useState("");
-  const [open, setOpen] = useState("");
-  const [isValidPhone, setIsValidPhone] = useState(true); // State for phone number validation
+  const [token, setToken] = React.useState("");
+  const [open, setOpen] = React.useState("");
   const queryParams = queryString.parse(location.search);
   const roomCodeFromURL = queryParams.roomCode;
   const phoneFromURL = queryParams.phone;
   const id = queryParams.id;
-  const phoneRegex = /^[6-9]{10}$/; // Regex pattern for a 10-digit phone number
-
+  console.log("Room Code from URL:", roomCodeFromURL);
+  console.log("id", id);
+  console.log("phone", phoneFromURL);
   const setData = () => {
     axios
       .get(
@@ -29,8 +29,7 @@ const Home = () => {
       .catch((error) => {
         console.error("Error fetching call details:", error.message);
       });
-
-    axios
+      axios
       .get(
         `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}&phone=${phoneFromURL}`
       )
@@ -38,6 +37,7 @@ const Home = () => {
         console.log(open);
         console.log(res.data);
         setToken(res.data.token);
+        localStorage.setItem("token", res.data.token);
         setOpen(res.data.isOpen);
       })
       .catch((error) => {
@@ -48,33 +48,55 @@ const Home = () => {
 
   useEffect(() => {
     setData();
-  }, [roomCodeFromURL]);
-
+    // fetchData(); // Initial API call
+  }, [roomCodeFromURL]); // Only run once on component
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Check if the phone number is valid before making the API call
-      if (phone.match(phoneRegex)) {
-        setIsValidPhone(true);
+      axios
+        .get(
+          `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}&phone=${phone}`
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.log("Error fetching data:", error.message);
+          console.error("Error fetching data:", error);
+        });
+      // Construct the data payload for the "Incoming Call" notification
+      if (open) {
+        const incomingCallPayload = {
+          to: `${token}`,
+          notification: {
+            title: "Incoming Call",
+            body: `Incoming call from +${phone}`,
+          },
+          data: {
+            type: "incomingCall",
+            phoneNo: `${phone}`,
+            roomId: `${roomCodeFromURL}`,
+          },
+        };
 
-        axios
-          .get(
-            `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}&phone=${phone}`
-          )
-          .then((res) => {
-            console.log(res.data);
-          })
-          .catch((error) => {
-            console.log("Error fetching data:", error.message);
-            console.error("Error fetching data:", error);
-          });
+        // Make a POST request to send the "Incoming Call" notification
+        const incomingCallResponse = await axios.post(
+          "https://fcm.googleapis.com/fcm/send",
+          incomingCallPayload,
+          {
+            headers: {
+              Authorization:
+                "key=AAAAjOGkb6k:APA91bEE9QdPorav9k-vgR61kKY21iNXoB4ZC_X-SAuLSG8p61shpYRWClG1AHa6UQfocCpin2uUSM9nA-iQyFwRIKWcqdxeaA8AYzwa4LGEkB-XG6JYkSU7Tlxa3VrqkAxZC4IcVemE",
+            },
+          }
+        );
 
-        // Rest of your code for notifications and navigation
-      } else {
-        // Invalid phone number, set isValidPhone to false
-        setIsValidPhone(false);
+        console.log(incomingCallResponse.data);
       }
+      // Navigate to the "/room" route
+      navigate(`/room/${roomCodeFromURL}/${phone}/${id}`);
     } catch (error) {
+      // Handle any errors that occur during the POST request
       console.error("Error sending FCM message:", error);
     }
   };
@@ -96,18 +118,15 @@ const Home = () => {
           type="text"
           placeholder="Phone Number"
           value={phone}
-          className={`input-field ${isValidPhone ? "" : "invalid-phone"}`} 
+          className="input-field"
           onChange={(e) => setPhone(e.target.value)}
         />
-        {!isValidPhone && (
-          <p className="error-message">Please enter a valid 10-digit phone number.</p>
-        )}
         <button type="submit" className="submit-button">
           Enter Shop
         </button>
       </form>
       <p className="additional-text">
-        Your video and mic will be by default off while entering the shop. Enjoy
+        Your video and mic will be by default off while entering the shop.Enjoy
         Shopping!!.
       </p>
     </div>

@@ -20,6 +20,7 @@ const Room = () => {
   const meetElementRef = useRef(null);
 
   useEffect(() => {
+    // localStorage.setItem("isMissedOnce", false);
     let timeoutId; // Timer ID for the 1-minute delay
     let isMissed = localStorage.getItem("isMissed"); // Flag to track whether the call was missed
     const stopFetchingData = async () => {
@@ -29,32 +30,33 @@ const Room = () => {
           "It seems like the shop is experiencing high traffic. Please try again later!!!"
         );
         setLoading(true);
-        const missedCallPayload = {
-          to: `${token}`,
-          notification: {
-            title: "Missed Call",
-            body: `Missed call from +${phone}`,
-          },
-          data: {
-            type: "missedCall",
-            phoneNo: `${phone}`,
-            roomId: `${roomId}`,
-          },
-        };
-        // Make a POST request to send the "Missed Call" notification
-        await axios.post(
-          "https://fcm.googleapis.com/fcm/send",
-          missedCallPayload,
-          {
-            headers: {
-              Authorization:
-                "key=AAAAjOGkb6k:APA91bEE9QdPorav9k-vgR61kKY21iNXoB4ZC_X-SAuLSG8p61shpYRWClG1AHa6UQfocCpin2uUSM9nA-iQyFwRIKWcqdxeaA8AYzwa4LGEkB-XG6JYkSU7Tlxa3VrqkAxZC4IcVemE",
-            },
-          }
-        );
+        // const missedCallPayload = {
+        //   to: `${token}`,
+        //   notification: {
+        //     title: "Missed Call",
+        //     body: `Missed call from +${phone}`,
+        //   },
+        //   data: {
+        //     type: "missedCall",
+        //     phoneNo: `${phone}`,
+        //     roomId: `${roomId}`,
+        //   },
+        // };
+        // // Make a POST request to send the "Missed Call" notification
+        // await axios
+        //   .post("https://fcm.googleapis.com/fcm/send", missedCallPayload, {
+        //     headers: {
+        //       Authorization:
+        //         "key=AAAAjOGkb6k:APA91bEE9QdPorav9k-vgR61kKY21iNXoB4ZC_X-SAuLSG8p61shpYRWClG1AHa6UQfocCpin2uUSM9nA-iQyFwRIKWcqdxeaA8AYzwa4LGEkB-XG6JYkSU7Tlxa3VrqkAxZC4IcVemE",
+        //     },
+        //   })
+        //   .then(() => {
+        //     localStorage.setItem("isMissedOnce", true);
+        //     console.log(isMissed);
+        //   });
       }
     };
-    // Set a timer to call stopFetchingData after 1 minute if isAccepted and isRejected are still false
+    // Set a timer to call stopFetchingData after 30 second if isAccepted and isRejected are still false
     const startStopTimer = () => {
       timeoutId = setTimeout(stopFetchingData, 30000); // 30 second delay
     };
@@ -117,7 +119,7 @@ const Room = () => {
 
       zp.joinRoom({
         container: meetElementRef.current,
-        onLeaveRoom: (reason, users) => {
+        onLeaveRoom: () => {
           const callEndTime = Date.now();
           const durationInSeconds = Math.floor(
             (callEndTime - callStartTime) / 1000

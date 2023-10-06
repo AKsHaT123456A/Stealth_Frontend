@@ -54,10 +54,9 @@ const Room = () => {
         );
       }
     };
-
     // Set a timer to call stopFetchingData after 1 minute if isAccepted and isRejected are still false
     const startStopTimer = () => {
-      timeoutId = setTimeout(stopFetchingData, 60000); // 1 minute delay
+      timeoutId = setTimeout(stopFetchingData, 30000); // 30 second delay
     };
 
     const fetchData = async () => {

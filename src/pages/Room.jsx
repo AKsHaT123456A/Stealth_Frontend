@@ -66,8 +66,6 @@ const Room = () => {
         const res = await axios.get(
           `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${username}&id=${id}&phone=${phone}`
         );
-        console.log("Data fetched!", roomId);
-        console.log(res.data);
         if (!res.data.isOpen) {
           setMessage(
             "Currently, the shop is closed. Try again between 10:00 am and 6:00 pm"
@@ -80,7 +78,6 @@ const Room = () => {
         } else if (res.data.isRejected) {
           localStorage.setItem("isMissed", false);
           setIsRejected(true);
-          console.log("HI");
           setMessage(
             "It seems like the shop is experiencing high traffic. Please try again later!!!"
           );
@@ -128,9 +125,6 @@ const Room = () => {
             .get(
               `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phone}&roomName=${username}&duration=${durationInSeconds}&id=${id}`
             )
-            .then((res) => {
-              console.log(res.data);
-            });
           // Display the leaving screen with the user count
           const leavingScreen = document.createElement("div");
           leavingScreen.innerHTML = `

@@ -13,12 +13,6 @@ function FeedbackForm() {
       .get(
         `https://stealth-zys3.onrender.com/api/v1/video/reset/${roomName}/${phone}`
       )
-      .then(() => {
-        console.log("Success");
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
   };
 
   useEffect(() => {
@@ -44,8 +38,7 @@ function FeedbackForm() {
         `https://stealth-zys3.onrender.com/api/v1/auth/feedback?roomName=${roomName}&phone=${phone}`,
         dataPayload
       )
-      .then((res) => {
-        console.log(res.data);
+      .then(() => {
         // Show a success toast notification
         toast.success("Feedback submitted successfully!", {
           position: "top-right",
@@ -57,9 +50,6 @@ function FeedbackForm() {
       });
 
     // Handle the submission of selectedEmoji and feedbackText here
-    console.log("Selected Emoji:", selectedEmoji);
-    console.log("Feedback Text:", feedbackText);
-
     // Clear the form after submission
     setSelectedEmoji("");
     setFeedbackText("");

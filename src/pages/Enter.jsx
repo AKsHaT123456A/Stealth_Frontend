@@ -15,34 +15,22 @@ const Home = () => {
   const roomCodeFromURL = queryParams.roomCode;
   const phoneFromURL = queryParams.phone;
   const id = queryParams.id;
-  console.log("Room Code from URL:", roomCodeFromURL);
-  console.log("id", id);
-  console.log("phone", phoneFromURL);
   const setData = () => {
     axios
       .get(
         `https://stealth-zys3.onrender.com/api/v1/video/getCallDetails?phone=${phoneFromURL}&id=${id}&roomName=${roomCodeFromURL}`
       )
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching call details:", error.message);
-      });
       axios
       .get(
         `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}&phone=${phoneFromURL}`
       )
       .then((res) => {
-        console.log(open);
-        console.log(res.data);
         setToken(res.data.token);
         localStorage.setItem("token", res.data.token);
         setOpen(res.data.isOpen);
       })
       .catch((error) => {
         console.log("Error fetching data:", error.message);
-        console.error("Error fetching data:", error);
       });
   };
 
@@ -57,13 +45,6 @@ const Home = () => {
         .get(
           `https://stealth-zys3.onrender.com/api/v1/video/call?roomName=${roomCodeFromURL}&id=${id}&phone=${phone}`
         )
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((error) => {
-          console.log("Error fetching data:", error.message);
-          console.error("Error fetching data:", error);
-        });
       // Construct the data payload for the "Incoming Call" notification
       if (open) {
         const incomingCallPayload = {
@@ -80,7 +61,7 @@ const Home = () => {
         };
 
         // Make a POST request to send the "Incoming Call" notification
-        const incomingCallResponse = await axios.post(
+        await axios.post(
           "https://fcm.googleapis.com/fcm/send",
           incomingCallPayload,
           {
@@ -91,7 +72,6 @@ const Home = () => {
           }
         );
 
-        console.log(incomingCallResponse.data);
       }
       // Navigate to the "/room" route
       navigate(`/room/${roomCodeFromURL}/${phone}/${id}`);
